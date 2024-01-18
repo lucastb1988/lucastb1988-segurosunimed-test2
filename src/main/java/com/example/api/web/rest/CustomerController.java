@@ -35,7 +35,7 @@ public class CustomerController {
     @ApiOperation("Salvar cliente.")
     @PostMapping
     public ResponseEntity<Void> create(@RequestHeader String token, @Valid @RequestBody Customer obj) {
-        autorizar(token, ProfileEnum.ADMIN);
+        authorize(token, ProfileEnum.ADMIN);
         obj = customerService.create(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -44,7 +44,7 @@ public class CustomerController {
     @ApiOperation("Atualizar cliente.")
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@RequestHeader String token, @Valid @RequestBody Customer obj, @PathVariable Long id) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         customerService.update(obj, id);
         return ResponseEntity.noContent().build();
     }
@@ -52,7 +52,7 @@ public class CustomerController {
     @ApiOperation("Deletar cliente.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@RequestHeader String token, @PathVariable Long id) {
-        autorizar(token, ProfileEnum.ADMIN);
+        authorize(token, ProfileEnum.ADMIN);
         customerService.delete(id);
         return ResponseEntity.ok().build();
     }
@@ -60,7 +60,7 @@ public class CustomerController {
     @ApiOperation("Buscar todos os clientes inseridos no banco.")
     @GetMapping
     public ResponseEntity<List<Customer>> findAll(@RequestHeader String token) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return ResponseEntity.ok().body(customerService.findAll());
     }
 
@@ -70,7 +70,7 @@ public class CustomerController {
                                                         @RequestParam(value = "name", required = false) final String name,
                                                         @RequestParam(value = "email", required = false) final String email,
                                                         @RequestParam(value = "gender", required = false) final String gender) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return ResponseEntity.ok().body(customerService.findByFilters(name, email, gender));
     }
 
@@ -82,7 +82,7 @@ public class CustomerController {
             @RequestParam(value = "qtyPerPage", defaultValue = "10") Integer qtyPerPage,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return ResponseEntity.ok().body(customerService.findPaginated(page, qtyPerPage, orderBy, direction));
     }
 
@@ -90,7 +90,7 @@ public class CustomerController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Customer findById(@RequestHeader String token, @PathVariable Long id) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return customerService.findById(id).get();
     }
 
@@ -98,7 +98,7 @@ public class CustomerController {
     @GetMapping("/name/{name}")
     @ResponseStatus(HttpStatus.OK)
     public Customer findByName(@RequestHeader String token, @PathVariable String name) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return customerService.findByName(name);
     }
 
@@ -106,7 +106,7 @@ public class CustomerController {
     @GetMapping("/email/{email}")
     @ResponseStatus(HttpStatus.OK)
     public Customer findByEmail(@RequestHeader String token, @PathVariable String email) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return customerService.findByEmail(email);
     }
 
@@ -114,13 +114,13 @@ public class CustomerController {
     @GetMapping("/gender/{gender}")
     @ResponseStatus(HttpStatus.OK)
     public List<Customer> findByGender(@RequestHeader String token, @PathVariable String gender) {
-        autorizar(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
+        authorize(token, ProfileEnum.ADMIN, ProfileEnum.FUNCIONARIO);
         return customerService.findByGender(gender);
     }
 
-    private void autorizar(String token, ProfileEnum... profiles) {
+    private void authorize(String token, ProfileEnum... profiles) {
         try {
-            authorizationService.autorizar(token, profiles);
+            authorizationService.authorize(token, profiles);
         } catch (Exception e) {
             throw e;
         }

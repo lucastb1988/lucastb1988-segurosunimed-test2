@@ -26,7 +26,7 @@ public class AuthorizationService {
         this.sessionInfoRepository = sessionInfoRepository;
     }
 
-    public User autorizar(final String accessToken, ProfileEnum... profiles) {
+    public User authorize(final String accessToken, ProfileEnum... profiles) {
         SessionInfo sessionInfo = sessionInfoRepository.findByAccessToken(accessToken);
 
         if (sessionInfo == null) {
